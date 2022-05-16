@@ -25,4 +25,6 @@ contract Guessor {
         payable(msg.sender).transfer(address(this).balance);
     }
 
+    receive() external payable {}
+
 }
