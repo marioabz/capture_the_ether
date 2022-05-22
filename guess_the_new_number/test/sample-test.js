@@ -10,11 +10,9 @@ describe("Guesser", () => {
   const overrides = {
     value: ethers.utils.parseEther("1.0")
   }
-  let provider;
 
   before(async () => {
     [deployer] = await ethers.getSigners()
-    provider = ethers.getDefaultProvider();
   })
 
   beforeEach(async () => {
