@@ -13,13 +13,15 @@ contract PredictTheFutureChallenge {
         return address(this).balance == 0;
     }
 
-    function lockInGuess(uint8 n) public payable {
+    function lockInGuess(uint8 n) public payable returns (bool) {
         require(guesser == 0);
         require(msg.value == 1 ether);
 
         guesser = msg.sender;
         guess = n;
         settlementBlockNumber = block.number + 1;
+
+        return true;
     }
 
     function settle() public {

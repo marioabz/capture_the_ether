@@ -1,12 +1,16 @@
 pragma solidity ^0.8.13;
 
+import "hardhat/console.sol";
+
 
 contract Predictor {
 
     address owner;
     address challenge;
-
     uint8 numberToGuess = 6;
+
+    event LockInResultBytes(bytes result);
+    event LockInNumberSuccess(bool success);
 
     constructor(address _challenge) {
         owner = msg.sender;
@@ -18,13 +22,16 @@ contract Predictor {
         return uint8(uint(keccak256(payload))) % 10;
     }
 
-     function lockNumber() public payable returns(bool){
+     function lockNumber() public payable returns(bool) {
 
-         require(msg.value == 1 ether, "Value is not enough");
-         bytes4 payload = bytes4(keccak256(("lockInGuess(uint8)")));
-         challenge.call{value: 1 ether}(abi.encodeWithSelector(payload, numberToGuess));
-
-         return true;
+        require(msg.value == 1 ether, "Value is not enough");
+        bytes4 payload = bytes4(keccak256(("lockInGuess(uint8)")));
+        (bool success, bytes memory resultBytes) = challenge.call{value: 1 ether}(
+            abi.encodeWithSelector(payload, numberToGuess)
+        );
+        emit LockInNumberSuccess(success);
+        emit LockInResultBytes(resultBytes);
+        return true;
      }
 
     function solveChallenge() public {
