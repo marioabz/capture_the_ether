@@ -1,5 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
+const { BigNumber } = ethers;
 
 describe("Greeter", function () {
 
@@ -27,6 +28,65 @@ describe("Greeter", function () {
     let challengeBalance = await ethers.provider.getBalance(challenge.address);
 
     expect(challengeBalance).to.equal(await ethers.utils.parseEther("2.0"))
+
+    /*
+        let filter = {
+        address: predictor.address,
+        topics: [
+          ethers.utils.id("LockInNumberSuccess(bool)")
+        ]
+      }
+    */
+  })
+
+  it("predictor contract has a balance of 2 Ether", async () => {
+
+    await predictor.lockNumber(overrides);
+
+    while(true) {
+      let blockNumber = (await ethers.provider.getBlock()).number;
+      try {
+
+        await predictor.dummyBlockIterator();
+        await predictor.solveChallenge();
+        break;
+      } catch(error) {
+
+        console.log("Transaction failed at block: ", blockNumber);
+      }
+    }
+    let predictorBalance = await ethers.provider.getBalance(predictor.address);
+    let challengeBalance = await ethers.provider.getBalance(challenge.address);
+
+    expect(challengeBalance).to.equal(await ethers.utils.parseEther("0"))
+    expect(predictorBalance).to.equal(await ethers.utils.parseEther("2.0"))
+  });
+
+  it("Users gets his Ether back", async () => {
+    await predictor.lockNumber(overrides);
+
+    while(true) {
+      let blockNumber = (await ethers.provider.getBlock()).number;
+      try {
+
+        await predictor.dummyBlockIterator();
+        await predictor.solveChallenge();
+        break;
+      } catch(error) {
+
+        console.log("Transaction failed at block: ", blockNumber);
+      }
+    }
+    let prevUserBalance = await ethers.provider.getBalance(deployer.address);
+    await predictor.withdraw();
+    let newUserBalance = await ethers.provider.getBalance(deployer.address);
+
+    let [prevBalanceInt] = ethers.utils.formatEther(prevUserBalance).split(".")
+    let [nextBalanceInt] = ethers.utils.formatEther(newUserBalance).split(".")
+
+    let difference = (parseInt(nextBalanceInt) -  parseInt(prevBalanceInt)).toString()
+
+    expect(ethers.utils.parseUnits(difference, "ether")).to.equal(await ethers.utils.parseEther("2"));
   })
 
 });
