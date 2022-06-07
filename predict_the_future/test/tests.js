@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { BigNumber } = ethers;
 
-describe("Greeter", function () {
+describe("Challenge", function () {
 
   let deployer;
   let challenge;
