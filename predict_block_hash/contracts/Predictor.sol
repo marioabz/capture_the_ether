@@ -15,7 +15,7 @@ contract DumbPredictor {
     }
 
     function getSettlePayload() internal pure returns(bytes memory) {
-        return abi.encodeWithSelector(bytes4(keccak256("settle()")));
+        return abi.encode(bytes4(keccak256("settle()")));
     }
 
     function getChallengePayload(bytes32 arg) internal pure returns(bytes memory) {
