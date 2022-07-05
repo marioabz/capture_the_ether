@@ -1,7 +1,9 @@
 pragma solidity ^0.4.22;
 
 contract TokenSaleChallenge {
+
     mapping(address => uint256) public balanceOf;
+
     uint256 constant PRICE_PER_TOKEN = 1 ether;
 
     function TokenSaleChallenge(address _player) public payable {
@@ -24,3 +26,4 @@ contract TokenSaleChallenge {
         balanceOf[msg.sender] -= numTokens;
         msg.sender.transfer(numTokens * PRICE_PER_TOKEN);
     }
+}
